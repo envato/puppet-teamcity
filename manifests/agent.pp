@@ -21,10 +21,6 @@ class teamcity::agent(
     managehome => true,
   }
 
-  package { 'unzip':
-    ensure => 'installed',
-  }
-
   # TODO: Switch to curl
   wget::fetch { "teamcity-buildagent":
     source      => "$download_url",
