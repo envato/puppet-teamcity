@@ -23,7 +23,7 @@ class teamcity::agent(
 
   s3file { "/root/$archive_name":
     ensure     => 'present',
-    bucket     => '$bucket',
+    bucket     => "$bucket",
     object_key => "$archive_name",
   }
   
