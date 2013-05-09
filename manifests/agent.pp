@@ -33,7 +33,7 @@ class teamcity::agent(
     require => [ Wget::Fetch["teamcity-buildagent"] ],
   }
 
-  exec { "exctract-build-agent":
+  exec { "extract-build-agent":
     command => "unzip -d $destination_dir/$agent_dir /root/$archive_name && cp $destination_dir/$agent_dir/conf/buildAgent.dist.properties $destination_dir/$agent_dir/conf/buildAgent.properties && chown $username:$username $destination_dir/$agent_dir -R",
     path => "/usr/bin:/usr/sbin:/bin:/usr/local/bin:/opt/local/bin",
     creates => "$destination_dir/$agent_dir",
@@ -45,12 +45,13 @@ class teamcity::agent(
   file { "$destination_dir/$agent_dir/bin/":
     mode => 755,
     recurse => true,
-    require => Exec["exctract-build-agent"],
+    require => Exec["extract-build-agent"],
   }
 
   file { "buildAgent.properties":
     path    => "$destination_dir/$agent_dir/conf/buildAgent.properties",
     content => template("teamcity/buildAgent.properties.erb"),
+    require => Exec["extract-build-agent"]
   }
   
   # init.d script
