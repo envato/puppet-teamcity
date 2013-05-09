@@ -1,10 +1,10 @@
 
 class teamcity::agent(
   $agentname,
+  $bucket,
   $username = $teamcity::params::username,
   $server_url = $teamcity::params::server_url,
   $archive_name = $teamcity::params::archive_name,
-  $download_url = $teamcity::params::download_url,
   $agent_dir = $teamcity::params::agent_dir,
   $destination_dir = $teamcity::params::destination_dir,
   $priority =  $teamcity::params::priority,
@@ -21,16 +21,15 @@ class teamcity::agent(
     managehome => true,
   }
 
-  # TODO: Switch to curl
-  wget::fetch { "teamcity-buildagent":
-    source      => "$download_url",
-    destination => "/root/$archive_name",
-    timeout     => 0,
+  s3file { "/root/$archive_name":
+    ensure     => 'present',
+    bucket     => '$bucket',
+    object_key => "$archive_name",
   }
-
+  
   file { "$destination_dir":
     ensure => "directory",
-    require => [ Wget::Fetch["teamcity-buildagent"] ],
+    require => [ S3file["/root/$archive_name"] ],
   }
 
   exec { "extract-build-agent":
