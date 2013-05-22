@@ -15,7 +15,7 @@ class teamcity::agent(
     distribution => 'jdk',
     version      => 'latest',
   }
-  
+
   user { "$username":
     ensure     => "present",
     managehome => true,
@@ -26,7 +26,7 @@ class teamcity::agent(
     bucket     => "$bucket",
     object_key => "$archive_name",
   }
-  
+
   file { "$destination_dir":
     ensure => "directory",
     require => [ S3file["/root/$archive_name"] ],
@@ -50,9 +50,10 @@ class teamcity::agent(
   file { "buildAgent.properties":
     path    => "$destination_dir/$agent_dir/conf/buildAgent.properties",
     content => template("teamcity/buildAgent.properties.erb"),
-    require => Exec["extract-build-agent"]
+    require => Exec["extract-build-agent"],
+    owner   => $username,
   }
-  
+
   # init.d script
   file { "/etc/init.d/build-agent":
     owner   => "root",
