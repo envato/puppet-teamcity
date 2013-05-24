@@ -9,6 +9,7 @@ class teamcity::agent(
   $destination_dir = $teamcity::params::destination_dir,
   $priority =  $teamcity::params::priority,
   $teamcity_agent_mem_opts = $teamcity::params::teamcity_agent_mem_opts,
+  $work_dir = $teamcity::params::work_dir,
   ) inherits teamcity::params {
 
   class { 'java':
@@ -47,10 +48,19 @@ class teamcity::agent(
     require => Exec["extract-build-agent"],
   }
 
+  augeas { "buildAgent.properties":
+    lens    => "Properties.lns",
+    incl    => "$destination_dir/$agent_dir/conf/buildAgent.properties",
+    changes => [
+        "set name $agentname",
+        "set serverUrl $server_url",
+        "set workDir $work_dir",
+    ],
+    require => Exec["extract-build-agent"],
+  }
+
   file { "buildAgent.properties":
     path    => "$destination_dir/$agent_dir/conf/buildAgent.properties",
-    content => template("teamcity/buildAgent.properties.erb"),
-    require => Exec["extract-build-agent"],
     owner   => $username,
   }
 
