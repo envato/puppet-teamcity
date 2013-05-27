@@ -48,20 +48,20 @@ class teamcity::agent(
     require => Exec["extract-build-agent"],
   }
 
-  file { "properties_updated.lns":
-    path    => "/usr/share/augeas/lenses/dist/properties.lns",
-    content => template("${module_name}/properties_updated.lns.erb"),
+  file { "properties.aug":
+    path    => "/usr/share/augeas/lenses/dist/properties.aug",
+    content => template("${module_name}/properties.aug.erb"),
   }
 
   augeas { "buildAgent.properties":
-    lens    => "properties.lns",
+    lens    => "properties.aug",
     incl    => "$destination_dir/$agent_dir/conf/buildAgent.properties",
     changes => [
         "set name $agentname",
         "set serverUrl $server_url",
         "set workDir $work_dir",
     ],
-    require => [ File["properties_updated.lns"], Exec["extract-build-agent"], ],
+    require => [ File["properties.aug"], Exec["extract-build-agent"], ],
   }
 
   file { "buildAgent.properties":
