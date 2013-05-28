@@ -34,7 +34,7 @@ class teamcity::agent(
   }
 
   exec { "extract-build-agent":
-    command => "unzip -d $destination_dir/$agent_dir /root/$archive_name && cp $destination_dir/$agent_dir/conf/buildAgent.dist.properties $destination_dir/$agent_dir/conf/buildAgent.properties && chown $username:$username $destination_dir/$agent_dir -R",
+    command => "unzip -d $destination_dir/$agent_dir /root/$archive_name && chown $username:$username $destination_dir/$agent_dir -R",
     path => "/usr/bin:/usr/sbin:/bin:/usr/local/bin:/opt/local/bin",
     creates => "$destination_dir/$agent_dir",
     require => [ File["$destination_dir"], User["$username"], Package["unzip"], ],
@@ -48,20 +48,15 @@ class teamcity::agent(
     require => Exec["extract-build-agent"],
   }
 
-  file { "updated_properties.lns":
-    path    => "/usr/share/augeas/lenses/updated_properties.lns",
-    content => template("${module_name}/properties.aug.erb"),
-  }
-
   augeas { "buildAgent.properties":
-    lens    => "updated_properties.lns",
+    lens    => "Properties.lns",
     incl    => "$destination_dir/$agent_dir/conf/buildAgent.properties",
     changes => [
         "set name $agentname",
         "set serverUrl $server_url",
         "set workDir $work_dir",
     ],
-    require => [ File["updated_properties.lns"], Exec["extract-build-agent"], ],
+    require => [ Exec["extract-build-agent"], ],
   }
 
   file { "buildAgent.properties":

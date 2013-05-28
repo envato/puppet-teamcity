@@ -6,7 +6,7 @@ serverUrl=<%= server_url %>
 name=<%= agentname %>
 
 ## Container directory to create default checkout directories for the build configurations.
-workDir=../work
+workDir=<%= work_dir %>
 
 ## Container directory for the temporary directories.
 ## Please note that the directory may be cleaned between the builds.
@@ -17,5 +17,5 @@ systemDir=../system
 
 ownPort=9090
 
-authorizationToken=
+authorizationToken=""
 
