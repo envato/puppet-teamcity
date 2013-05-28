@@ -49,7 +49,7 @@ class teamcity::agent(
   }
 
   file { "properties.aug":
-    path    => "/usr/share/augeas/lenses/dist/properties.aug",
+    path    => "/usr/share/augeas/lenses/properties.aug",
     content => template("${module_name}/properties.aug.erb"),
   }
 
