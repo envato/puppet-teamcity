@@ -54,9 +54,8 @@ class teamcity::agent(
   }
 
   augeas { "buildAgent.properties":
-    lens    => "properties.aug",
-    context => "/files$destination_dir/$agent_dir/conf/buildAgent.properties",
-    incl    => "/usr/share/augeas/lenses/properties.aug",
+    lens    => "Properties.lns",
+    incl    => "$destination_dir/$agent_dir/conf/buildAgent.properties",
     changes => [
         "set name $agentname",
         "set serverUrl $server_url",
