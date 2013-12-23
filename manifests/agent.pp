@@ -27,7 +27,7 @@ class teamcity::agent(
   exec { "file /root/$archive_name":
     path        => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
     command     => "/usr/bin/curl -X GET 'https://${bucket}.s3.amazonaws.com/${archive_name}' -s -f -o '/root/${archive_name}'",
-    unless      => "[ -e /root/$archive_name ]",
+    creates     => "/root/${archive_name}",
     timeout     => 300,
     refreshonly => false,
   }
