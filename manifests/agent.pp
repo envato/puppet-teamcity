@@ -24,17 +24,17 @@ class teamcity::agent(
     managehome => true,
   }
 
-  exec { "s3file /root/$archive_name":
+  exec { "file /root/$archive_name":
     path        => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
     command     => "/usr/bin/curl -X GET 'https://${bucket}.s3.amazonaws.com/${archive_name}' -s -f -o '/root/${archive_name}'",
-    unless      => "[ -e /root/$archive_name]",
+    unless      => "[ -e /root/$archive_name ]",
     timeout     => 300,
     refreshonly => false,
   }
 
   file { "$destination_dir":
     ensure => "directory",
-    require => [ Exec["s3file /root/$archive_name"] ],
+    require => [ Exec["file /root/$archive_name"] ],
   }
 
   exec { "extract-build-agent":
